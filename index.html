@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ER Architect — Design entity-relationship diagrams with a clean, intuitive drag-and-drop canvas.">
+    <title>ER Architect — Visual ER Diagram Builder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Hidden background layers (disabled in new design) -->
+    <div class="bg-gradient" aria-hidden="true"></div>
+    <div class="bg-vignette" aria-hidden="true"></div>
+
+    <!-- HEADER -->
+    <header id="header">
+        <div class="logo">
+            <div class="logo-circle">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+                    <rect x="3" y="3" width="18" height="18" rx="3"/>
+                    <line x1="8" y1="9" x2="16" y2="9"/>
+                    <line x1="8" y1="13" x2="14" y2="13"/>
+                </svg>
+            </div>
+            <span>ER Architect</span>
+        </div>
+        <nav>
+            <button id="btn-undo" title="Undo (Ctrl+Z)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10h13a4 4 0 010 8H7"/><path d="M7 6l-4 4 4 4"/></svg>
+                Undo
+            </button>
+            <button id="btn-redo" title="Redo (Ctrl+Y)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10H8a4 4 0 000 8h9"/><path d="M17 6l4 4-4 4"/></svg>
+                Redo
+            </button>
+            <button id="btn-clear" title="Clear Canvas">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M5 6v14a2 2 0 002 2h10a2 2 0 002-2V6"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                Clear
+            </button>
+            <button id="btn-ai-generate" class="ai-btn" title="Generate ER Diagram from AI">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                ✨ AI Generate
+            </button>
+            <button id="btn-export" class="primary-btn" title="Export as PNG">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export PNG
+            </button>
+        </nav>
+    </header>
+
+    <!-- TOOLBAR -->
+    <div id="toolbar">
+        <button class="toolbar-btn" id="tool-select" title="Select & Move (V)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/></svg>
+            Select
+        </button>
+        <button class="toolbar-btn" id="tool-entity" title="Add Entity (E)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
+            Entity
+        </button>
+        <button class="toolbar-btn" id="tool-relation" title="Add Relationship (R)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12,2 22,12 12,22 2,12"/></svg>
+            Relationship
+        </button>
+        <button class="toolbar-btn" id="tool-connect" title="Connect Elements (C)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><circle cx="3" cy="12" r="2"/><circle cx="21" cy="12" r="2"/></svg>
+            Connect
+        </button>
+        <div class="separator"></div>
+        <button class="toolbar-btn" id="tool-snap" title="Toggle Grid Snap">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            Grid
+        </button>
+        <div class="zoom-controls">
+            <button class="toolbar-btn" id="zoom-out" title="Zoom Out">−</button>
+            <span class="zoom-label" id="zoom-level">100%</span>
+            <button class="toolbar-btn" id="zoom-in" title="Zoom In">+</button>
+            <button class="toolbar-btn" id="zoom-fit" title="Fit to Screen">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN LAYOUT -->
+    <div id="app-layout">
+
+        <!-- SIDEBAR -->
+        <aside id="sidebar">
+            <div class="sidebar-section">
+                <h3>Shapes</h3>
+                <div class="shape-palette">
+                    <div class="shape-item" data-shape="entity" draggable="true">
+                        <svg viewBox="0 0 60 40">
+                            <rect x="4" y="4" width="52" height="32" rx="4" fill="none" stroke="#4d7cfe" stroke-width="1.5"/>
+                        </svg>
+                        <span>Entity</span>
+                    </div>
+                    <div class="shape-item" data-shape="weak-entity" draggable="true">
+                        <svg viewBox="0 0 60 40">
+                            <rect x="2" y="2" width="56" height="36" rx="4" fill="none" stroke="#4d7cfe" stroke-width="1" stroke-dasharray="4"/>
+                            <rect x="6" y="6" width="48" height="28" rx="3" fill="none" stroke="#4d7cfe" stroke-width="1.5"/>
+                        </svg>
+                        <span>Weak Entity</span>
+                    </div>
+                    <div class="shape-item" data-shape="relationship" draggable="true">
+                        <svg viewBox="0 0 60 40">
+                            <polygon points="30,4 56,20 30,36 4,20" fill="none" stroke="#f59e42" stroke-width="1.5"/>
+                        </svg>
+                        <span>Relationship</span>
+                    </div>
+                    <div class="shape-item" data-shape="attribute" draggable="true">
+                        <svg viewBox="0 0 60 40">
+                            <ellipse cx="30" cy="20" rx="26" ry="14" fill="none" stroke="#8b5cf6" stroke-width="1.5"/>
+                        </svg>
+                        <span>Attribute</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Elements</h3>
+            </div>
+            <div id="entity-list">
+                <!-- Dynamically filled -->
+            </div>
+        </aside>
+
+        <!-- CANVAS -->
+        <div id="canvas-container">
+            <div class="grid-bg"></div>
+            <svg id="diagramCanvas" width="4000" height="3000">
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#9ba1ad"/>
+                    </marker>
+                </defs>
+                <g id="connections-layer"></g>
+                <g id="elements-layer"></g>
+            </svg>
+
+            <div class="empty-state" id="empty-state">
+                <div class="icon-glow">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#9ba1ad" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="14" y2="13"/></svg>
+                </div>
+                <h3>Start building your ER Diagram</h3>
+                <p>Drag shapes from the sidebar or use the toolbar above</p>
+            </div>
+        </div>
+
+        <!-- PROPERTIES PANEL -->
+        <div id="properties-panel"></div>
+    </div>
+
+    <!-- STATUS BAR -->
+    <div id="status-bar">
+        <div class="left">
+            <span id="status-text">Ready</span>
+            <span id="element-count">0 elements</span>
+        </div>
+        <div class="right">
+            <span id="cursor-pos">X: 0  Y: 0</span>
+        </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- AI GENERATE MODAL -->
+    <div class="ai-modal-overlay" id="ai-modal" style="display:none">
+        <div class="ai-modal">
+            <div class="ai-modal-header">
+                <div class="ai-modal-icon">✨</div>
+                <h2>AI Schema Generator</h2>
+                <p>Describe your system and AI will generate the complete ER diagram</p>
+            </div>
+            <div class="ai-modal-body">
+                <label for="ai-topic-input">Topic / System Description</label>
+                <textarea id="ai-topic-input" rows="3" placeholder="e.g. Hospital Management System, E-Commerce Platform, University Enrollment System..."></textarea>
+                <div class="ai-examples">
+                    <span class="ai-example-label">Try:</span>
+                    <button class="ai-example-chip" data-topic="Hospital Management System">🏥 Hospital</button>
+                    <button class="ai-example-chip" data-topic="E-Commerce Platform">🛒 E-Commerce</button>
+                    <button class="ai-example-chip" data-topic="Library Management System">📚 Library</button>
+                    <button class="ai-example-chip" data-topic="Social Media Application">💬 Social Media</button>
+                    <button class="ai-example-chip" data-topic="Online Food Delivery App">🍕 Food Delivery</button>
+                </div>
+            </div>
+            <div class="ai-modal-footer">
+                <button id="ai-cancel-btn" class="btn-cancel">Cancel</button>
+                <button id="ai-generate-btn" class="btn-ai-go">
+                    <span class="btn-text">Generate ER Diagram</span>
+                    <span class="btn-loading" style="display:none">
+                        <svg class="spinner" width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="3" stroke-dasharray="30 70" stroke-linecap="round"/></svg>
+                        Generating...
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT -->
+    <script src="script.js"></script>
+
+</body>
+
+</html>
